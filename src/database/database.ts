@@ -1,16 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-
-const DATABASE_NAME = 'artes_foto_bahia.db';
-
-export interface StockItem {
-  id: number;
-  name: string;
-  category: 'porcelana' | 'moldura';
-  quantity: number;
-  price: number;
-  description: string;
-  lastUpdated: string;
-}
+import { DATABASE_NAME } from '../helpers/contants';
 
 export const initDatabase = async () => {
   const db = await SQLite.openDatabaseAsync(DATABASE_NAME);
