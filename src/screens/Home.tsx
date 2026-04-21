@@ -27,6 +27,7 @@ import { styles } from './Home.styles';
 import { NewItemModal } from './components/NewItemModal';
 import { HistoryModal } from './components/HistoryModal';
 import { LowStockAlertsModal } from './components/LowStockAlertsModal';
+import { ReportsModal } from './components/ReportsModal';
 import { RegisteredItemsList } from './components/RegisteredItemsList';
 
 const Home = () => {
@@ -36,6 +37,7 @@ const Home = () => {
   const [newItemOpen, setNewItemOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
+  const [reportsOpen, setReportsOpen] = useState(false);
 
   const lowStockItems = useMemo(
     () =>
@@ -123,6 +125,11 @@ const Home = () => {
         items={lowStockItems}
         threshold={LOW_STOCK_THRESHOLD}
       />
+      <ReportsModal
+        visible={reportsOpen}
+        onClose={() => setReportsOpen(false)}
+        items={items}
+      />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* Header */}
@@ -171,7 +178,12 @@ const Home = () => {
             color={Theme.colors.primary}
             onPress={() => setHistoryOpen(true)}
           />
-          <ActionButton title="Relatórios" icon={TrendingUp} color={Theme.colors.slate} />
+          <ActionButton
+            title="Relatórios"
+            icon={TrendingUp}
+            color={Theme.colors.slate}
+            onPress={() => setReportsOpen(true)}
+          />
           <ActionButton
             title="Alertas"
             icon={AlertTriangle}

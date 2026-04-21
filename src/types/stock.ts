@@ -18,3 +18,18 @@ export type StockHistoryEntry = {
   message: string;
   createdAt: string;
 };
+
+export type CategoryReportSlice = {
+  label: string;
+  lines: number;
+  units: number;
+  value: number;
+};
+
+export type StockReport = {
+  itemCount: number;
+  totalUnits: number;
+  estimatedValue: number;
+  porcelana: CategoryReportSlice;
+  moldura: CategoryReportSlice;
+};
