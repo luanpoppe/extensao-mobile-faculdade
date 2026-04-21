@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -20,10 +20,13 @@ import {
 import { Theme } from '../theme/theme';
 import { initDatabase } from '../database/database';
 import { stockRepository } from '../database/repository';
+import { LOW_STOCK_THRESHOLD } from '../helpers/contants';
+import { lowStockQuantityPhrase } from '../helpers/stockDisplay';
 import type { InsertStockItemDto, StockItem } from '../types/stock';
 import { styles } from './Home.styles';
 import { NewItemModal } from './components/NewItemModal';
 import { HistoryModal } from './components/HistoryModal';
+import { LowStockAlertsModal } from './components/LowStockAlertsModal';
 import { RegisteredItemsList } from './components/RegisteredItemsList';
 
 const Home = () => {
@@ -32,6 +35,15 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [newItemOpen, setNewItemOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [alertsOpen, setAlertsOpen] = useState(false);
+
+  const lowStockItems = useMemo(
+    () =>
+      items
+        .filter((i) => i.quantity <= LOW_STOCK_THRESHOLD)
+        .sort((a, b) => a.quantity - b.quantity),
+    [items]
+  );
 
   const refreshData = async () => {
     const [summaryData, list] = await Promise.all([
@@ -105,6 +117,12 @@ const Home = () => {
         onSave={saveNewItem}
       />
       <HistoryModal visible={historyOpen} onClose={() => setHistoryOpen(false)} />
+      <LowStockAlertsModal
+        visible={alertsOpen}
+        onClose={() => setAlertsOpen(false)}
+        items={lowStockItems}
+        threshold={LOW_STOCK_THRESHOLD}
+      />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* Header */}
@@ -154,7 +172,12 @@ const Home = () => {
             onPress={() => setHistoryOpen(true)}
           />
           <ActionButton title="Relatórios" icon={TrendingUp} color={Theme.colors.slate} />
-          <ActionButton title="Alertas" icon={AlertTriangle} color={Theme.colors.warning} />
+          <ActionButton
+            title="Alertas"
+            icon={AlertTriangle}
+            color={Theme.colors.warning}
+            onPress={() => setAlertsOpen(true)}
+          />
         </View>
 
         {/* Low Stock Section */}
@@ -163,13 +186,35 @@ const Home = () => {
             <AlertTriangle size={20} color={Theme.colors.danger} />
             <Text style={styles.alertTitle}>Alertas de Baixo Estoque</Text>
           </View>
-          <TouchableOpacity style={[styles.alertCard, Theme.shadows.light]}>
-            <View style={styles.alertInfo}>
-              <Text style={styles.alertItemName}>Porcelana Oval 10x15</Text>
-              <Text style={styles.alertItemStock}>Restam apenas 5 unidades</Text>
+          {lowStockItems.length === 0 ? (
+            <View style={[styles.alertCard, styles.alertCardEmpty, Theme.shadows.light]}>
+              <View style={styles.alertInfo}>
+                <Text style={styles.alertItemName}>Nenhum alerta ativo</Text>
+                <Text style={styles.alertItemStockMuted}>
+                  Itens com até {LOW_STOCK_THRESHOLD} unidades aparecem aqui. Estoque em dia.
+                </Text>
+              </View>
             </View>
-            <ChevronRight size={20} color={Theme.colors.textMuted} />
-          </TouchableOpacity>
+          ) : (
+            <View style={styles.alertCardsContainer}>
+              {lowStockItems.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[styles.alertCard, Theme.shadows.light]}
+                  onPress={() => setAlertsOpen(true)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.alertInfo}>
+                    <Text style={styles.alertItemName}>{item.name}</Text>
+                    <Text style={styles.alertItemStock}>
+                      {lowStockQuantityPhrase(item.quantity)}
+                    </Text>
+                  </View>
+                  <ChevronRight size={20} color={Theme.colors.textMuted} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
 
         <RegisteredItemsList items={items} />

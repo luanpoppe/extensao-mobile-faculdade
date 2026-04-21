@@ -107,6 +107,10 @@ export const styles = StyleSheet.create({
   },
   alertSection: {
     marginTop: Theme.spacing.sm,
+    marginBottom: Theme.spacing.md,
+  },
+  alertCardsContainer: {
+    gap: Theme.spacing.sm,
   },
   alertHeader: {
     flexDirection: 'row',
@@ -129,6 +133,9 @@ export const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: Theme.colors.danger,
   },
+  alertCardEmpty: {
+    borderLeftColor: '#CED4DA',
+  },
   alertInfo: {
     flex: 1,
   },
@@ -140,6 +147,11 @@ export const styles = StyleSheet.create({
   alertItemStock: {
     fontSize: 13,
     color: Theme.colors.danger,
+    marginTop: 2,
+  },
+  alertItemStockMuted: {
+    fontSize: 13,
+    color: Theme.colors.textMuted,
     marginTop: 2,
   },
 });
