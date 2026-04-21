@@ -1,9 +1,13 @@
+export type StockCategory = "porcelana" | "moldura";
+
 export interface StockItem {
   id: number;
   name: string;
-  category: 'porcelana' | 'moldura';
+  category: StockCategory;
   quantity: number;
   price: number;
   description: string;
   lastUpdated: string;
 }
+
+export type InsertStockItemDto = Omit<StockItem, "id" | "lastUpdated">;
