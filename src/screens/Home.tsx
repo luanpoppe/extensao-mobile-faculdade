@@ -18,19 +18,33 @@ import {
   ChevronRight
 } from 'lucide-react-native';
 import { Theme } from '../theme/theme';
-import { getStockSummary, initDatabase } from '../database/database';
+import { initDatabase } from '../database/database';
+import { stockRepository } from '../database/repository';
+import type { InsertStockItemDto, StockItem } from '../types/stock';
 import { styles } from './Home.styles';
+import { NewItemModal } from './components/NewItemModal';
+import { RegisteredItemsList } from './components/RegisteredItemsList';
 
 const Home = () => {
   const [summary, setSummary] = useState({ porcelanas: 0, molduras: 0 });
+  const [items, setItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newItemOpen, setNewItemOpen] = useState(false);
+
+  const refreshData = async () => {
+    const [summaryData, list] = await Promise.all([
+      stockRepository.getStockSummary(),
+      stockRepository.getAllStockItems(),
+    ]);
+    setSummary(summaryData);
+    setItems(list);
+  };
 
   useEffect(() => {
     const setup = async () => {
       try {
         await initDatabase();
-        const data = await getStockSummary();
-        setSummary(data);
+        await refreshData();
       } catch (error) {
         console.error('Database error:', error);
       } finally {
@@ -52,8 +66,22 @@ const Home = () => {
     </View>
   );
 
-  const ActionButton = ({ title, icon: Icon, color }: any) => (
-    <TouchableOpacity style={[styles.actionButton, Theme.shadows.light]}>
+  const ActionButton = ({
+    title,
+    icon: Icon,
+    color,
+    onPress,
+  }: {
+    title: string;
+    icon: React.ComponentType<{ size: number; color: string }>;
+    color: string;
+    onPress?: () => void;
+  }) => (
+    <TouchableOpacity
+      style={[styles.actionButton, Theme.shadows.light]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
       <View style={[styles.actionIcon, { backgroundColor: color }]}>
         <Icon size={20} color={Theme.colors.white} />
       </View>
@@ -61,9 +89,19 @@ const Home = () => {
     </TouchableOpacity>
   );
 
+  const saveNewItem = async (dto: InsertStockItemDto) => {
+    await stockRepository.insertStockItem(dto);
+    await refreshData();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
+      <NewItemModal
+        visible={newItemOpen}
+        onClose={() => setNewItemOpen(false)}
+        onSave={saveNewItem}
+      />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* Header */}
@@ -80,9 +118,6 @@ const Home = () => {
         {/* Stock Overview */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Visão Geral do Estoque</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAll}>Ver tudo</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.statsRow}>
@@ -103,7 +138,12 @@ const Home = () => {
         {/* Quick Actions */}
         <Text style={styles.sectionTitle}>Ações Rápidas</Text>
         <View style={styles.actionsGrid}>
-          <ActionButton title="Novo Item" icon={Plus} color={Theme.colors.success} />
+          <ActionButton
+            title="Novo Item"
+            icon={Plus}
+            color={Theme.colors.success}
+            onPress={() => setNewItemOpen(true)}
+          />
           <ActionButton title="Histórico" icon={History} color={Theme.colors.primary} />
           <ActionButton title="Relatórios" icon={TrendingUp} color={Theme.colors.slate} />
           <ActionButton title="Alertas" icon={AlertTriangle} color={Theme.colors.warning} />
@@ -123,6 +163,8 @@ const Home = () => {
             <ChevronRight size={20} color={Theme.colors.textMuted} />
           </TouchableOpacity>
         </View>
+
+        <RegisteredItemsList items={items} />
 
       </ScrollView>
     </SafeAreaView>
