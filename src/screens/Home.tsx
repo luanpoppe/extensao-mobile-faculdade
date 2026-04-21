@@ -23,6 +23,7 @@ import { stockRepository } from '../database/repository';
 import type { InsertStockItemDto, StockItem } from '../types/stock';
 import { styles } from './Home.styles';
 import { NewItemModal } from './components/NewItemModal';
+import { HistoryModal } from './components/HistoryModal';
 import { RegisteredItemsList } from './components/RegisteredItemsList';
 
 const Home = () => {
@@ -30,6 +31,7 @@ const Home = () => {
   const [items, setItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [newItemOpen, setNewItemOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const refreshData = async () => {
     const [summaryData, list] = await Promise.all([
@@ -102,6 +104,7 @@ const Home = () => {
         onClose={() => setNewItemOpen(false)}
         onSave={saveNewItem}
       />
+      <HistoryModal visible={historyOpen} onClose={() => setHistoryOpen(false)} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* Header */}
@@ -144,7 +147,12 @@ const Home = () => {
             color={Theme.colors.success}
             onPress={() => setNewItemOpen(true)}
           />
-          <ActionButton title="Histórico" icon={History} color={Theme.colors.primary} />
+          <ActionButton
+            title="Histórico"
+            icon={History}
+            color={Theme.colors.primary}
+            onPress={() => setHistoryOpen(true)}
+          />
           <ActionButton title="Relatórios" icon={TrendingUp} color={Theme.colors.slate} />
           <ActionButton title="Alertas" icon={AlertTriangle} color={Theme.colors.warning} />
         </View>

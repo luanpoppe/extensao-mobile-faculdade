@@ -11,3 +11,10 @@ export interface StockItem {
 }
 
 export type InsertStockItemDto = Omit<StockItem, "id" | "lastUpdated">;
+
+export type StockHistoryEntry = {
+  id: number;
+  stockItemId: number;
+  message: string;
+  createdAt: string;
+};

@@ -1,6 +1,15 @@
 import * as SQLite from 'expo-sqlite';
 import { DATABASE_NAME } from '../helpers/contants';
-import type { InsertStockItemDto, StockCategory, StockItem } from '../types/stock';
+import type {
+  InsertStockItemDto,
+  StockCategory,
+  StockHistoryEntry,
+  StockItem,
+} from '../types/stock';
+
+function categoryLabel(category: StockCategory): string {
+  return category === 'porcelana' ? 'Porcelana' : 'Moldura';
+}
 
 export type StockSummary = {
   porcelanas: number;
@@ -53,13 +62,43 @@ export class StockRepository {
     };
   }
 
+  async getStockHistory(limit = 100): Promise<StockHistoryEntry[]> {
+    const db = await this.openDb();
+    const rows = await db.getAllAsync<{
+      id: number;
+      stock_item_id: number;
+      message: string;
+      created_at: string;
+    }>(
+      `SELECT id, stock_item_id, message, created_at
+       FROM stock_history
+       ORDER BY datetime(created_at) DESC
+       LIMIT ?`,
+      [limit]
+    );
+    return rows.map((row) => ({
+      id: row.id,
+      stockItemId: row.stock_item_id,
+      message: row.message,
+      createdAt: row.created_at,
+    }));
+  }
+
   async insertStockItem(dto: InsertStockItemDto): Promise<void> {
     const { name, category, quantity, price, description } = dto;
     const db = await this.openDb();
-    await db.runAsync(
-      'INSERT INTO stock_items (name, category, quantity, price, description) VALUES (?, ?, ?, ?, ?)',
-      [name, category, quantity, price, description]
-    );
+    const msg = `Item cadastrado: ${name} · ${quantity} un. · ${categoryLabel(category)}`;
+
+    await db.withTransactionAsync(async () => {
+      const insert = await db.runAsync(
+        'INSERT INTO stock_items (name, category, quantity, price, description) VALUES (?, ?, ?, ?, ?)',
+        [name, category, quantity, price, description]
+      );
+      await db.runAsync(
+        'INSERT INTO stock_history (stock_item_id, message) VALUES (?, ?)',
+        [Number(insert.lastInsertRowId), msg]
+      );
+    });
   }
 }
 
