@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import { DATABASE_NAME } from '../helpers/contants';
-import type { InsertStockItemDto } from '../types/stock';
+import type { InsertStockItemDto, StockCategory, StockItem } from '../types/stock';
 
 export type StockSummary = {
   porcelanas: number;
@@ -10,6 +10,32 @@ export type StockSummary = {
 export class StockRepository {
   private openDb() {
     return SQLite.openDatabaseAsync(DATABASE_NAME);
+  }
+
+  async getAllStockItems(): Promise<StockItem[]> {
+    const db = await this.openDb();
+    const rows = await db.getAllAsync<{
+      id: number;
+      name: string;
+      category: string;
+      quantity: number;
+      price: number;
+      description: string | null;
+      last_updated: string;
+    }>(
+      `SELECT id, name, category, quantity, price, description, last_updated
+       FROM stock_items
+       ORDER BY category, name COLLATE NOCASE`
+    );
+    return rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      category: row.category as StockCategory,
+      quantity: row.quantity,
+      price: row.price,
+      description: row.description ?? '',
+      lastUpdated: row.last_updated,
+    }));
   }
 
   async getStockSummary(): Promise<StockSummary> {

@@ -20,25 +20,31 @@ import {
 import { Theme } from '../theme/theme';
 import { initDatabase } from '../database/database';
 import { stockRepository } from '../database/repository';
-import type { InsertStockItemDto } from '../types/stock';
+import type { InsertStockItemDto, StockItem } from '../types/stock';
 import { styles } from './Home.styles';
 import { NewItemModal } from './components/NewItemModal';
+import { RegisteredItemsList } from './components/RegisteredItemsList';
 
 const Home = () => {
   const [summary, setSummary] = useState({ porcelanas: 0, molduras: 0 });
+  const [items, setItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [newItemOpen, setNewItemOpen] = useState(false);
 
-  const refreshSummary = async () => {
-    const data = await stockRepository.getStockSummary();
-    setSummary(data);
+  const refreshData = async () => {
+    const [summaryData, list] = await Promise.all([
+      stockRepository.getStockSummary(),
+      stockRepository.getAllStockItems(),
+    ]);
+    setSummary(summaryData);
+    setItems(list);
   };
 
   useEffect(() => {
     const setup = async () => {
       try {
         await initDatabase();
-        await refreshSummary();
+        await refreshData();
       } catch (error) {
         console.error('Database error:', error);
       } finally {
@@ -85,7 +91,7 @@ const Home = () => {
 
   const saveNewItem = async (dto: InsertStockItemDto) => {
     await stockRepository.insertStockItem(dto);
-    await refreshSummary();
+    await refreshData();
   };
 
   return (
@@ -112,9 +118,6 @@ const Home = () => {
         {/* Stock Overview */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Visão Geral do Estoque</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAll}>Ver tudo</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.statsRow}>
@@ -160,6 +163,8 @@ const Home = () => {
             <ChevronRight size={20} color={Theme.colors.textMuted} />
           </TouchableOpacity>
         </View>
+
+        <RegisteredItemsList items={items} />
 
       </ScrollView>
     </SafeAreaView>
