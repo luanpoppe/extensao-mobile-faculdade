@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     marginBottom: Theme.spacing.md,
   },
   sectionTitleSpaced: {
-    marginTop: Theme.spacing.md,
+    marginTop: Theme.spacing.xl,
   },
   emptyListText: {
     fontSize: 14,
