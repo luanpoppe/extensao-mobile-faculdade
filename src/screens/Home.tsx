@@ -29,6 +29,7 @@ import { HistoryModal } from './components/HistoryModal';
 import { LowStockAlertsModal } from './components/LowStockAlertsModal';
 import { ReportsModal } from './components/ReportsModal';
 import { RegisteredItemsList } from './components/RegisteredItemsList';
+import { SettingsModal } from './components/SettingsModal';
 
 const Home = () => {
   const [summary, setSummary] = useState({ porcelanas: 0, molduras: 0 });
@@ -38,6 +39,7 @@ const Home = () => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [reportsOpen, setReportsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const lowStockItems = useMemo(
     () =>
@@ -130,6 +132,15 @@ const Home = () => {
         onClose={() => setReportsOpen(false)}
         items={items}
       />
+      <SettingsModal
+        visible={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        items={items}
+        summary={summary}
+        lowStockCount={lowStockItems.length}
+        alertThreshold={LOW_STOCK_THRESHOLD}
+        onRefreshData={refreshData}
+      />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
         {/* Header */}
@@ -138,7 +149,11 @@ const Home = () => {
             <Text style={styles.welcomeText}>Bem-vindo,</Text>
             <Text style={styles.companyName}>Artes Foto Bahia</Text>
           </View>
-          <TouchableOpacity style={styles.profileButton}>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={() => setSettingsOpen(true)}
+            activeOpacity={0.7}
+          >
             <Settings size={24} color={Theme.colors.slate} />
           </TouchableOpacity>
         </View>

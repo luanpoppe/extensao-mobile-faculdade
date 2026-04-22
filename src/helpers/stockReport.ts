@@ -29,3 +29,29 @@ export function computeStockReport(items: StockItem[]): StockReport {
     moldura: computeCategoryReportSlice(items, 'moldura', 'Molduras'),
   };
 }
+
+export function formatCurrencyBrl(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+/** Texto plano para compartilhar (WhatsApp, e-mail, etc.). */
+export function buildStockShareText(
+  items: StockItem[],
+  summary: { porcelanas: number; molduras: number },
+  lowStockCount: number,
+  threshold: number,
+  appVersion: string
+): string {
+  const r = computeStockReport(items);
+  return [
+    'Artes Foto Bahia — Resumo do estoque',
+    `App v${appVersion}`,
+    '',
+    `Itens cadastrados: ${r.itemCount}`,
+    `Total de unidades: ${r.totalUnits}`,
+    `Porcelanas: ${summary.porcelanas} un. | Molduras: ${summary.molduras} un.`,
+    `Valor estimado: ${formatCurrencyBrl(r.estimatedValue)}`,
+    '',
+    `Alertas de baixo estoque (≤${threshold} un.): ${lowStockCount} item(ns)`,
+  ].join('\n');
+}

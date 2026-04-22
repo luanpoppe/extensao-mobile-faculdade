@@ -1,11 +1,8 @@
 import React, { useMemo } from 'react';
 import { View, Text, Modal, ScrollView, Pressable } from 'react-native';
-import { computeStockReport } from '../../helpers/stockReport';
+import { computeStockReport, formatCurrencyBrl } from '../../helpers/stockReport';
 import type { StockItem } from '../../types/stock';
 import { styles } from './ReportsModal.styles';
-
-const brl = (n: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
 
 type ReportsModalProps = {
   visible: boolean;
@@ -43,7 +40,7 @@ export function ReportsModal({ visible, onClose, items }: ReportsModalProps) {
 
             <View style={styles.kpiBox}>
               <Text style={styles.kpiLabel}>Valor estimado (qtd × preço)</Text>
-              <Text style={styles.kpiValueMoney}>{brl(report.estimatedValue)}</Text>
+              <Text style={styles.kpiValueMoney}>{formatCurrencyBrl(report.estimatedValue)}</Text>
             </View>
 
             <Text style={styles.sectionTitle}>Por categoria</Text>
@@ -61,7 +58,7 @@ export function ReportsModal({ visible, onClose, items }: ReportsModalProps) {
                 </View>
                 <View style={styles.catRow}>
                   <Text style={styles.catRowLabel}>Valor estimado</Text>
-                  <Text style={styles.catRowValue}>{brl(cat.value)}</Text>
+                  <Text style={styles.catRowValue}>{formatCurrencyBrl(cat.value)}</Text>
                 </View>
               </View>
             ))}
