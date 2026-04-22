@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, Modal, ScrollView, Pressable } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { computeStockReport, formatCurrencyBrl } from '../../helpers/stockReport';
 import type { StockItem } from '../../types/stock';
 import { styles } from './ReportsModal.styles';
@@ -15,8 +15,13 @@ export function ReportsModal({ visible, onClose, items }: ReportsModalProps) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+      <View style={styles.modalOverlay}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityLabel="Fechar ao tocar fora"
+        />
+        <View style={styles.modalCard}>
           <Text style={styles.modalTitle}>Relatório do estoque</Text>
           <Text style={styles.modalSubtitle}>
             Resumo com base nos itens cadastrados e nos preços unitários informados.
@@ -24,8 +29,10 @@ export function ReportsModal({ visible, onClose, items }: ReportsModalProps) {
 
           <ScrollView
             style={styles.scroll}
-            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled
+            showsVerticalScrollIndicator
             contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
           >
             <View style={styles.kpiRow}>
               <View style={styles.kpiBox}>
@@ -72,8 +79,8 @@ export function ReportsModal({ visible, onClose, items }: ReportsModalProps) {
           <Pressable style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>Fechar</Text>
           </Pressable>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }

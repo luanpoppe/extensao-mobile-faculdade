@@ -13,6 +13,8 @@ export const styles = StyleSheet.create({
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
     maxHeight: '88%',
+    width: '100%',
+    zIndex: 1,
     ...Theme.shadows.medium,
   },
   modalTitle: {

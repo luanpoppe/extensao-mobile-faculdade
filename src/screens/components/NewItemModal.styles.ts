@@ -12,6 +12,8 @@ export const styles = StyleSheet.create({
     backgroundColor: Theme.colors.card,
     borderRadius: Theme.borderRadius.lg,
     padding: Theme.spacing.lg,
+    width: '100%',
+    zIndex: 1,
     ...Theme.shadows.medium,
   },
   modalTitle: {

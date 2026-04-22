@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Modal, ScrollView, Pressable } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { AlertTriangle } from 'lucide-react-native';
 import { categoryLabel, lowStockQuantityPhrase } from '../../helpers/stockDisplay';
 import { Theme } from '../../theme/theme';
@@ -21,8 +21,13 @@ export function LowStockAlertsModal({
 }: LowStockAlertsModalProps) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+      <View style={styles.modalOverlay}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityLabel="Fechar ao tocar fora"
+        />
+        <View style={styles.modalCard}>
           <Text style={styles.modalTitle}>Alertas de baixo estoque</Text>
           <Text style={styles.modalSubtitle}>
             Itens com {threshold} unidades ou menos. Revise o pedido ou reposição.
@@ -35,8 +40,10 @@ export function LowStockAlertsModal({
           ) : (
             <ScrollView
               style={{ maxHeight: 360 }}
-              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator
               contentContainerStyle={styles.listContent}
+              keyboardShouldPersistTaps="handled"
             >
               {items.map((item) => (
                 <View key={item.id} style={styles.row}>
@@ -64,8 +71,8 @@ export function LowStockAlertsModal({
           <Pressable style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>Fechar</Text>
           </Pressable>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }

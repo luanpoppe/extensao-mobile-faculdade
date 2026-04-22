@@ -7,6 +7,7 @@ import {
   Pressable,
   Share,
   ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { RefreshCw, Share2 } from 'lucide-react-native';
@@ -69,13 +70,19 @@ export function SettingsModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+      <View style={styles.modalOverlay}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityLabel="Fechar ao tocar fora"
+        />
+        <View style={styles.modalCard}>
           <Text style={styles.modalTitle}>Configurações</Text>
 
           <ScrollView
             style={styles.scroll}
-            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled
+            showsVerticalScrollIndicator
             keyboardShouldPersistTaps="handled"
           >
             <View style={styles.section}>
@@ -139,8 +146,8 @@ export function SettingsModal({
           <Pressable style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>Fechar</Text>
           </Pressable>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }

@@ -6,6 +6,7 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  StyleSheet,
 } from 'react-native';
 import { History } from 'lucide-react-native';
 import { Theme } from '../../theme/theme';
@@ -71,8 +72,13 @@ export function HistoryModal({ visible, onClose }: HistoryModalProps) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+      <View style={styles.modalOverlay}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityLabel="Fechar ao tocar fora"
+        />
+        <View style={styles.modalCard}>
           <Text style={styles.modalTitle}>Histórico do estoque</Text>
           <Text style={styles.modalSubtitle}>
             Cadastros e movimentações recentes
@@ -92,8 +98,10 @@ export function HistoryModal({ visible, onClose }: HistoryModalProps) {
           ) : (
             <ScrollView
               style={{ maxHeight: 360 }}
-              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator
               contentContainerStyle={styles.listContent}
+              keyboardShouldPersistTaps="handled"
             >
               {entries.map((entry) => {
                 const parsed = parseCadastroMessage(entry.message);
@@ -133,8 +141,8 @@ export function HistoryModal({ visible, onClose }: HistoryModalProps) {
           <Pressable style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>Fechar</Text>
           </Pressable>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }

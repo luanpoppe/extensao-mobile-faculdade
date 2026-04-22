@@ -8,6 +8,7 @@ import {
   Platform,
   Pressable,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import { Theme } from '../../theme/theme';
 import type { InsertStockItemDto, StockCategory } from '../../types/stock';
@@ -82,8 +83,13 @@ export function NewItemModal({ visible, onClose, onSave }: NewItemModalProps) {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <Pressable style={styles.modalOverlay} onPress={handleClose}>
-          <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
+        <View style={styles.modalOverlay}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={handleClose}
+            accessibilityLabel="Fechar ao tocar fora"
+          />
+          <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Novo item</Text>
             <Text style={styles.modalLabel}>Nome</Text>
             <TextInput
@@ -159,8 +165,8 @@ export function NewItemModal({ visible, onClose, onSave }: NewItemModalProps) {
                 </Text>
               </TouchableOpacity>
             </View>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );
