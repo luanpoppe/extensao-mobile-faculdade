@@ -7,25 +7,30 @@ Este é um aplicativo móvel desenvolvido para o controle de estoque da empresa 
 - **React Native**: Framework para construção de interfaces nativas.
 - **Expo**: Plataforma para facilitar o desenvolvimento e publicação.
 - **Expo SQLite**: Banco de dados local robusto para persistência de dados.
+- **Expo Constants**: Leitura da versão do app a partir da configuração (tela de configurações).
 - **Lucide React Native**: Biblioteca de ícones modernos e elegantes.
 - **React Native Safe Area Context**: Gerenciamento de áreas seguras da tela.
 
 ## ✨ Funcionalidades
 
 - **Visão Geral Dinâmica**: Cards com resumo quantitativo de Porcelanas e Molduras.
-- **Banco de Dados Local**: Sincronização e persistência de dados utilizando SQLite.
-- **Alertas de Estoque Baixo**: Notificações visuais quando itens atingem níveis críticos.
+- **Banco de Dados Local**: Persistência de dados utilizando SQLite.
+- **Alertas de Estoque Baixo**: Indicação na interface quando itens ficam abaixo de um limite de unidades (valor configurável em `src/helpers/contants.ts`).
+- **Histórico**: Registro dos cadastros de itens para consulta em modal dedicado.
+- **Relatórios**: Resumo com totais, valor estimado (quantidade × preço) e detalhes por categoria.
+- **Configurações**: Acesso pela engrenagem na Home — versão do app, atualização dos dados do banco local e compartilhamento de um resumo em texto.
 - **Design Moderno**: Interface elegante com paleta de cores "Deep Navy & Gold", otimizada para dispositivos móveis e web.
-- **Ações Rápidas**: Atalhos para adição de itens, consulta de histórico e relatórios.
+- **Ações Rápidas**: Atalhos para adição de itens, consulta de histórico, relatórios e alertas.
 
 ## 📁 Estrutura do Projeto
 
 ```text
 src/
-├── database/     # Configuração e serviços do SQLite
-├── screens/      # Telas principais do aplicativo
-├── theme/        # Definições de cores, espaçamentos e estilos globais
-└── components/   # Componentes reutilizáveis (em desenvolvimento)
+├── database/          # Configuração e serviços do SQLite
+├── helpers/           # Constantes, textos e helpers de relatório
+├── screens/           # Telas principais e componentes (modais, listas)
+├── theme/             # Definições de cores, espaçamentos e estilos globais
+└── types/             # Tipos TypeScript do domínio
 ```
 
 ## 🛠️ Como Executar
